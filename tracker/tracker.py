@@ -2,6 +2,7 @@
 
 import json
 import os
+import tempfile
 import uuid
 import web
 
@@ -41,7 +42,7 @@ class task:
         raise web.HTTPError("405 Method Not Allowed")
 
     def check_version(self):
-        parameters = web.input()
+        parameters = web.input(_method='GET')
         if not "version" in parameters or parameters["version"] != "2.0":
             raise web.HTTPError("403 Forbidden", data="Client version too old. Please update!")
 
@@ -79,7 +80,7 @@ class task:
             t.commit()
 
     def put_task(self):
-        parameters = web.input()
+        parameters = web.input(_method='GET')
         if not "id" in parameters or not web.data():
             raise web.BadRequest()
 
