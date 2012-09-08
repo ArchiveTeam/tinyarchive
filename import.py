@@ -4,7 +4,7 @@ import sys
 import tinyarchive.database
 
 db_manager = tinyarchive.database.DBManager("database")
-db = db_manager.get_database("isgd")
+db = db_manager.get("isgd")
 
 try:
     for line in sys.stdin:
