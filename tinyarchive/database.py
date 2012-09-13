@@ -88,6 +88,9 @@ class Database:
             if stored_url != url:
                 raise ValueError("Code %s has two URLs: %s (stored) and %s (new)" % (code, stored_url, url))
 
+    def delete(self, code):
+        self._db.delete(code)
+
     def close(self):
         if self._db != None:
             self._db.close()
