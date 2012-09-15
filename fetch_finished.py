@@ -14,7 +14,7 @@ def parse_options():
         help="Connect to tracker at URL", metavar="URL")
     parser.add_option("-d", "--debug", action="store_const", dest="loglevel",
         const=logging.DEBUG, default=logging.INFO, help="Enable debug output")
-    parser.add_options("-o", "--output-directory", dest="output_directory",
+    parser.add_option("-o", "--output-directory", dest="output_directory",
         default=".", help="Output directory")
 
     options, args = parser.parse_args()
