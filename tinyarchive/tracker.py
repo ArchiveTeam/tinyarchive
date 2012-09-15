@@ -26,7 +26,7 @@ class Tracker(tinyback.tracker.Tracker):
         if status != httplib.OK:
             raise Exception("Unexpected status %i" % status)
 
-    def admin_cleanup(self, task):
+    def admin_cleanup(self):
         self._log.info("Running cleanup")
         status, data = self._request("GET", "admin/cleanup")
         if status != httplib.OK:
