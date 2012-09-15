@@ -16,6 +16,8 @@ def parse_options():
         const=logging.DEBUG, default=logging.INFO, help="Enable debug output")
     parser.add_option("-o", "--output-directory", dest="output_directory",
         default=".", help="Output directory")
+    parser.add_option("-c", "--cleanup", action="store_true", dest="cleanup",
+        help="Perform cleanup afterwards")
 
     options, args = parser.parse_args()
     if args:
@@ -46,6 +48,9 @@ def main():
             fileobj.write(tracker.admin_fetch(task))
 
         tracker.admin_delete(task)
+
+    if options.cleanup:
+        tracker.admin_cleanup()
 
 if __name__ == "__main__":
     main()
