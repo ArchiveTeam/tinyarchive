@@ -95,3 +95,6 @@ class Database:
         if self._db != None:
             self._db.close()
             self._db = None
+
+    def __len__(self):
+        return len(self._db)
