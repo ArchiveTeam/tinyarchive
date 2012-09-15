@@ -47,9 +47,13 @@ for line in sys.stdin:
     except ValueError as e:
         print e
         database.delete(code)
-        real_url = tinyback.services.factory(service).fetch(code)
-        print "Real URL: %s" % real_url
-        database.set(code, real_url)
+        try:
+            real_url = tinyback.services.factory(service).fetch(code)
+        except tinyback.exceptions.NoRedirectException:
+            print "No real URL"
+        else:
+            print "Real URL: %s" % real_url
+            database.set(code, real_url)
 
 db_manager.close()
 
