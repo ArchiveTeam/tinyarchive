@@ -71,17 +71,13 @@ class task:
         try:
             task = result[0]
         except IndexError:
-            t.rollback()
             return "null"
         else:
+            task["generator_options"] = json.loads(task["generator_options"])
             db.update("task", "id=$id", vars=task, status="assigned", assigned_when=0, assigned_to=web.ctx.ip)
-            try:
-                t.commit()
-            except:
-                return "null"
-            else:
-                task["generator_options"] = json.loads(task["generator_options"])
-                return json.dumps(task, sort_keys=True, indent=4)
+            return json.dumps(task, sort_keys=True, indent=4)
+        finally:
+            t.commit()
 
     def put_task(self):
         parameters = web.input(_method='GET')
