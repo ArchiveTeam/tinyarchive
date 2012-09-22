@@ -21,7 +21,19 @@ data_directory = os.path.abspath(os.path.join(directory, "files"))
 class index:
 
     def GET(self):
-        return 'Hello there. May I offer you an UUID? Here you go: %s' % (uuid.uuid1())
+        result = db.query("""
+            SELECT
+                service.name AS service,
+                COUNT(*) AS task_count
+            FROM task
+            JOIN service ON task.service_id = service.id
+            WHERE status = 'free'
+            GROUP BY service.id;
+        """)
+        data = {}
+        for row in result:
+            data[row["service"]] = row["task_count"]
+        return json.dumps(data, indent=4, sort_keys=True)
 
 class task:
 
