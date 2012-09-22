@@ -21,19 +21,45 @@ data_directory = os.path.abspath(os.path.join(directory, "files"))
 class index:
 
     def GET(self):
+        data = {
+            "tasks_free": self.get_tasks("free"),
+            "tasks_assigned": self.get_tasks("assigned"),
+            "tasks_done": self.get_tasks("done"),
+            "user_ranking": self.user_ranking()
+        }
+
+        return json.dumps(data, indent=4, sort_keys=True)
+
+    def get_tasks(self, status):
         result = db.query("""
             SELECT
                 service.name AS service,
                 COUNT(*) AS task_count
             FROM task
             JOIN service ON task.service_id = service.id
-            WHERE status = 'free'
+            WHERE status = $status
             GROUP BY service.id;
-        """)
+        """, {"status": status})
         data = {}
         for row in result:
             data[row["service"]] = row["task_count"]
-        return json.dumps(data, indent=4, sort_keys=True)
+        return data
+
+    def user_ranking(self):
+        result = db.query("""
+            SELECT
+                finished_by AS username,
+                COUNT(*) as task_count
+            FROM task
+            WHERE
+                status = 'done' AND
+                username IS NOT NULL
+            GROUP BY username;
+        """)
+        data = {}
+        for row in result:
+            data[row["username"]] = row["task_count"]
+        return data
 
 class task:
 
