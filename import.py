@@ -10,6 +10,7 @@ import time
 
 import tinyarchive.database
 import tinyback.generators
+import tinyback.services
 
 def parse_options():
     parser = optparse.OptionParser()
@@ -42,7 +43,18 @@ def import_file(metadata, data_file, database):
         try:
             while code != next(generator):
                 pass
-            database.set(code, url)
+            try:
+                database.set(code, url)
+            except ValueError as e:
+                print e
+                database.delete(code)
+                try:
+                    real_url = tinyback.services.factory(metadata["service"]).fetch(code)
+                except tinyback.exceptions.NoRedirectException:
+                    print "No real URL"
+                else:
+                    print "Real URL: %s" % real_url
+                    database.set(code, real_url)
         except StopIteration:
             print("Task %s does not match generator" % metadata["id"])
             return False
