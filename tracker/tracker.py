@@ -3,6 +3,7 @@
 import json
 import os
 import tempfile
+import time
 import uuid
 import web
 
@@ -74,7 +75,7 @@ class task:
             return "null"
         else:
             task["generator_options"] = json.loads(task["generator_options"])
-            db.update("task", "id=$id", vars=task, status="assigned", assigned_when=0, assigned_to=web.ctx.ip)
+            db.update("task", "id=$id", vars=task, status="assigned", assigned_when=int(time.time()), assigned_to=web.ctx.ip)
             return json.dumps(task, sort_keys=True, indent=4)
         finally:
             t.commit()
@@ -143,6 +144,8 @@ class admin:
 
         for name in dir_files.difference(db_files):
             os.unlink(os.path.join(data_directory, name))
+
+        db.update("task", "status = 'assigned' AND assigned_when < $assigned_when", vars={"assigned_when": int(time.time()) - 3600 * 12}, assigned_when=None, assigned_to=None, status="free")
 
         return ""
 
