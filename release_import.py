@@ -9,11 +9,9 @@ import tinyback.services
 
 database_directory = sys.argv[1]
 service = sys.argv[2]
-filename = sys.argv[3]
 
 print("DB dir:      %s" % database_directory)
 print("Service:     %s" % service)
-print("Filename:    %s" % filename)
 
 db_manager = tinyarchive.database.DBManager(database_directory)
 database = db_manager.get(service)
