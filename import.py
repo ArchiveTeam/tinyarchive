@@ -5,8 +5,6 @@ import json
 import logging
 import optparse
 import os.path
-import sqlite3
-import time
 
 import tinyarchive.database
 import tinyback.generators
@@ -68,7 +66,6 @@ def main():
         format="%(name)s: %(message)s")
 
     db_manager = tinyarchive.database.DBManager(options.database_directory)
-    import_db = sqlite3.connect(os.path.join(options.database_directory, "imports.sqlite"))
 
     for input_file in files:
         with open(input_file) as fileobj:
@@ -77,39 +74,11 @@ def main():
         data_file = os.path.join(os.path.dirname(input_file), metadata["id"] + ".txt.gz")
         if not os.path.isfile(data_file):
             print("Could not find data file for task %s" % metadata["id"])
+            db_manager.close()
             sys.exit(1)
 
-        cursor = import_db.cursor()
-        cursor.execute("SELECT id FROM service WHERE name = ?", (metadata["service"], ))
-        row = cursor.fetchone()
-        if row:
-            service_id = row[0]
-        else:
-            cursor.execute("INSERT INTO service (name) VALUES (?)", (metadata["service"], ))
-            service_id = cursor.lastrowid
+        import_file(metadata, data_file, db_manager.get(metadata["service"])):
 
-        cursor.execute("INSERT INTO import (imported, status, service_id, filename, generator_type, generator_options) VALUES (?, ?, ?, ?, ?, ?)", (
-            int(time.time()),
-            "pending",
-            service_id,
-            os.path.basename(data_file),
-            metadata["generator_type"],
-            json.dumps(metadata["generator_options"])))
-        import_id = cursor.lastrowid
-        import_db.commit()
-        cursor.close()
-
-        if import_file(metadata, data_file, db_manager.get(metadata["service"])):
-            status = "done"
-        else:
-            status = "conflict"
-
-        cursor = import_db.cursor()
-        cursor.execute("Update import SET status = ? WHERE id = ?", (status, import_id))
-        import_db.commit()
-        cursor.close()
-
-    import_db.close()
     db_manager.close()
 
 if __name__ == "__main__":
