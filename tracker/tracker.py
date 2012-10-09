@@ -154,7 +154,7 @@ class task:
             except KeyError:
                 finished_by = None
             else:
-                if not re.search("^[-_a-zA-Z0-9]{3,30}$", re.search):
+                if not re.search("^[-_a-zA-Z0-9]{3,30}$", finished_by):
                     finished_by = None
             db.update("task", "id=$id", vars=task, status="done", assigned_when=None, assigned_to=None, finished_by=finished_by, data_file=data_file)
             return ""
