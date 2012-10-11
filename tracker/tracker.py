@@ -188,7 +188,7 @@ class admin:
         for name in dir_files.difference(db_files):
             os.unlink(os.path.join(data_directory, name))
 
-        db.update("task", "status = 'assigned' AND assigned_when < $assigned_when", vars={"assigned_when": int(time.time()) - 3600 * 12}, assigned_when=None, assigned_to=None, status="free")
+        db.update("task", "status = 'assigned' AND assigned_when < $assigned_when", vars={"assigned_when": int(time.time()) - 1800}, assigned_when=None, assigned_to=None, status="free")
 
         return ""
 
