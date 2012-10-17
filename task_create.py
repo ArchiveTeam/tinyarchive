@@ -4,6 +4,7 @@ import json
 import uuid
 
 import tinyarchive.tracker
+import tinyarchive.utils
 import tinyback.generators
 
 def count_sequence(charset, count, start):
@@ -11,40 +12,27 @@ def count_sequence(charset, count, start):
         if i == count - 1:
             return code
 
-service = "tinyurl"
+def sequence_from_to(tracker, service, charset, start, stop, count):
+    generator_options = {
+        "charset": charset,
+        "start": start,
+        "stop": None
+    }
+    while generator_options["stop"] != stop:
+        generator_options["stop"] = count_sequence(generator_options["charset"], count, generator_options["start"])
+        if tinyarchive.utils.shortcode_compare(generator_options["stop"], stop) > 0:
+            generator_options["stop"] = stop
+        print tracker.admin_create(service, "sequence", generator_options)
+        generator_options["start"] = generator_options["stop"]
 
-if service == "bitly":
-    generator_type = "chain"
+def chain_multiple(tracker, service, charset, length, count):
     generator_options = {
-        "count": 600,
-        "length": 6,
-        "charset": "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ",
-        "seed": str(uuid.uuid4())
+        "charset": charset,
+        "count": count,
+        "length": length
     }
-elif service == "isgd":
-    generator_type = "chain"
-    generator_options = {
-        "count": 300,
-        "length": 5,
-        "charset": "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ",
-    }
-elif service == "tinyurl":
-    generator_type = "chain"
-    generator_options = {
-        "charset": "0123456789abcdefghijklmnopqrstuvwxyz",
-        "start": "a00000"
-    }
-    generator_options["stop"] = count_sequence(generator_options["charset"], 2, generator_options["start"])
-elif service == "ur1ca":
-    generator_type = "sequence"
-    generator_options = {
-        "charset": "0123456789abcdefghijklmnopqrstuvwxyz",
-        "start": "",
-        "stop":  ""
-    }
-
-if generator_type == "chain":
-    generator_options["seed"] = str(uuid.uuid4())
+    for i in range(count):
+        generator_options["seed"] = str(uuid.uuid4())
+        print tracker.admin_create(service, "chain", generator_options)
 
 tracker = tinyarchive.tracker.Tracker("http://tracker.tinyarchive.org/v1/")
-print tracker.admin_create(service, generator_type, generator_options)
