@@ -25,13 +25,13 @@ def sequence_from_to(tracker, service, charset, start, stop, count):
         print tracker.admin_create(service, "sequence", generator_options)
         generator_options["start"] = generator_options["stop"]
 
-def chain_multiple(tracker, service, charset, length, count):
+def chain_multiple(tracker, service, charset, length, count, number_of_tasks):
     generator_options = {
         "charset": charset,
         "count": count,
         "length": length
     }
-    for i in range(count):
+    for i in range(number_of_tasks):
         generator_options["seed"] = str(uuid.uuid4())
         print tracker.admin_create(service, "chain", generator_options)
 
