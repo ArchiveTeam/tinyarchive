@@ -29,7 +29,7 @@ def parse_options():
     return (options, args)
 
 def import_file(metadata, data_file, database):
-    print("Importing %s from %s" % (metadata["id"], data_file))
+    print("Importing %s from %s for service %s" % (metadata["id"], data_file, metadata["service"]))
 
     generator = tinyback.generators.factory(metadata["generator_type"], metadata["generator_options"])
     fileobj = gzip.GzipFile(data_file)
@@ -41,18 +41,7 @@ def import_file(metadata, data_file, database):
         try:
             while code != next(generator):
                 pass
-            try:
-                database.set(code, url)
-            except ValueError as e:
-                print e
-                database.delete(code)
-                try:
-                    real_url = tinyback.services.factory(metadata["service"]).fetch(code)
-                except tinyback.exceptions.NoRedirectException:
-                    print "No real URL"
-                else:
-                    print "Real URL: %s" % real_url
-                    database.set(code, real_url)
+            database.set(code, url)
         except StopIteration:
             print("Task %s does not match generator" % metadata["id"])
             return False
@@ -77,7 +66,7 @@ def main():
             db_manager.close()
             sys.exit(1)
 
-        import_file(metadata, data_file, db_manager.get(metadata["service"])):
+        import_file(metadata, data_file, db_manager.get(metadata["service"]))
 
     db_manager.close()
 

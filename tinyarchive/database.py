@@ -1,7 +1,9 @@
 from bsddb3 import db
 import itertools
 import os
+import urlparse
 
+import tinyarchive.conflictsolver
 import tinyarchive.utils
 
 class DBManager:
@@ -65,10 +67,12 @@ class Database:
             stored_url = self._db.get(code)
             if stored_url == url:
                 return
-            if self._service == "bitly":
-                if len(stored_url) > 1000 and stored_url[:1000] == url:
-                    return
-            raise ValueError("Code %s has two URLs: %s (stored) and %s (new)" % (code, stored_url, url))
+            solver = tinyarchive.conflictsolver.factory(self._service)
+            real_url = solver.solve(code, stored_url, url)
+            if stored_url != real_url:
+                self.delete(code)
+                if real_url != None:
+                    self.set(code, real_url)
 
     def delete(self, code):
         self._db.delete(code)
