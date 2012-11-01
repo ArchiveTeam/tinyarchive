@@ -44,7 +44,8 @@ def import_file(metadata, data_file, database):
                 pass
             try:
                 database.set(code, url)
-            except ValueError:
+            except Exception as e:
+                log.fatal("Caught exception: %s" % e)
                 return False
         except StopIteration:
             log.fatal("Task %s does not match generator" % metadata["id"])
