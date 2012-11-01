@@ -29,7 +29,8 @@ def parse_options():
     return (options, args)
 
 def import_file(metadata, data_file, database):
-    print("Importing %s from %s for service %s" % (metadata["id"], data_file, metadata["service"]))
+    log = logging.getLogger("import_file")
+    log.debug("Importing %s from %s for service %s" % (metadata["id"], data_file, metadata["service"]))
 
     generator = tinyback.generators.factory(metadata["generator_type"], metadata["generator_options"])
     fileobj = gzip.GzipFile(data_file)
@@ -41,9 +42,12 @@ def import_file(metadata, data_file, database):
         try:
             while code != next(generator):
                 pass
-            database.set(code, url)
+            try:
+                database.set(code, url)
+            except ValueError:
+                return False
         except StopIteration:
-            print("Task %s does not match generator" % metadata["id"])
+            log.fatal("Task %s does not match generator" % metadata["id"])
             return False
 
     return True
@@ -55,18 +59,23 @@ def main():
         format="%(name)s: %(message)s")
 
     db_manager = tinyarchive.database.DBManager(options.database_directory)
+    log = logging.getLogger("main")
 
+    log.info("Importing %i files" % len(files))
     for input_file in files:
         with open(input_file) as fileobj:
             metadata = json.load(fileobj)
 
         data_file = os.path.join(os.path.dirname(input_file), metadata["id"] + ".txt.gz")
         if not os.path.isfile(data_file):
-            print("Could not find data file for task %s" % metadata["id"])
-            db_manager.close()
-            sys.exit(1)
+            log.warn("Could not find data file for task %s" % metadata["id"])
+            break
 
-        import_file(metadata, data_file, db_manager.get(metadata["service"]))
+        if not import_file(metadata, data_file, db_manager.get(metadata["service"])):
+            log.fatal("Error while importing file")
+            break
+    else:
+        log.info("Successfully inished import")
 
     db_manager.close()
 

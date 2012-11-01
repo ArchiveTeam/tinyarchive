@@ -1,19 +1,16 @@
-import abc
 import logging
 import urlparse
 
 import tinyback
 
-class ConflictSolver:
-
-    __metaclass__ = abc.ABCMeta
+class ConflictSolver(object):
 
     def __init__(self, service):
-        self._log = logging.getLogger("ConflictSolver%s" % service)
+        self._log = logging.getLogger("ConflictSolver.%s" % service)
 
-    @abc.abstractmethod
     def solve(self, code, stored_url, url):
-        pass
+        self._log.fatal("Code %s, stored URL is '%s' but new URL is '%s'" % (code, stored_url.decode("ascii", "ignore"), url.decode("ascii", "ignore")))
+        raise ValueError("Unsolvable conflict for code %s" % code)
 
 class AutomaticConflictSolver(ConflictSolver):
 
@@ -29,9 +26,9 @@ class AutomaticConflictSolver(ConflictSolver):
                 return url
             else:
                 self._log.fatal("Code %s leads to '%s', but stored URL was '%s' and new URL was '%s'" % (code, real_url, stored_url, url))
-                raise ValueError()
+                raise ValueError("New URL for code %s does not mach real URL" % code)
         except tinyback.exceptions.NoRedirectException:
-            self._log.fatal("Code suddenly disappeared")
+            self._log.fatal("Code %s suddenly disappeared" % code)
             raise ValueError()
 
 class ManualConflictSolver(AutomaticConflictSolver):
@@ -51,29 +48,26 @@ class ManualConflictSolver(AutomaticConflictSolver):
             elif choice == "3":
                 return real_url
 
-class BitlyConflictSolver(ConflictSolver):
+class BitlyConflictSolver(ManualConflictSolver):
 
     def solve(self, code, stored_url, url):
         netloc = urlparse.urlparse(url).netloc
         stored_netloc = urlparse.urlparse(stored_url).netloc
         if stored_netloc.lower() == netloc:
             return stored_url
-        raise ValueError("Unsolvable conflict for code %s" % code)
+        return super(BitlyConflictSolver, self).solve(code, stored_url, url)
 
-class IsgdConflictSolver(ConflictSolver):
+class IsgdConflictSolver(ManualConflictSolver):
 
     def solve(self, code, stored_url, url):
         if len(stored_url) > 1000 and stored_url[:1000] == url:
             return stored_url
-        raise ValueError("Unsolvable conflict for code %s" % code)
+        return super(IsgdConflictSolver, self).solve(code, stored_url, url)
 
-class TinyurlConflictSolver(ConflictSolver):
+class TinyurlConflictSolver(ManualConflictSolver):
 
     def __init__(self, service):
         super(TinyurlConflictSolver, self).__init__(service)
-        if service != "tinyurl":
-            raise ValueError("TinyurlConflictSolver only works for service tinyurl")
-        self._service = None
 
     def solve(self, code, stored_url, url):
         if url.strip() == stored_url.strip():
@@ -87,12 +81,12 @@ class TinyurlConflictSolver(ConflictSolver):
                 return url
 
         if url.decode("ascii", "ignore") == stored_url.decode("ascii", "ignore"):
-            if not self._service:
-                self._service = tinyback.services.factory("tinyurl")
+            self._service = tinyback.services.factory("tinyurl")
             if self._service.fetch(code) == url:
                 return url
 
-        raise ValueError("Unsolvable conflict for code %s" % code)
+        return super(TinyurlConflictSolver, self).solve(code, stored_url, url)
+
 
 def factory(service):
     if service == "bitly":
