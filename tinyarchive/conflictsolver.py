@@ -73,11 +73,11 @@ class TinyurlConflictSolver(ManualConflictSolver):
         if url.strip() == stored_url.strip():
             return url
 
-        netloc = urlparse.urlparse(stored_url).netloc
-        if netloc in ["clickserve.cc-dt.com", "www.kqzyfj.com", "www.dpbolvw.net", "click.linksynergy.com", "www.anrdoezrs.net", "www.jdoqocy.com", "ticketsuk.at", "www.awin1.com", "send.onenetworkdirect.net", "www.tkqlhce.com", "track.webgains.com"]:
+        hostname = urlparse.urlparse(stored_url).hostname
+        if hostname in ["www.pjatr.com", "pjtra.com", "clickserve.cc-dt.com", "www.kqzyfj.com", "www.dpbolvw.net", "click.linksynergy.com", "www.anrdoezrs.net", "www.jdoqocy.com", "ticketsuk.at", "www.awin1.com", "send.onenetworkdirect.net", "www.tkqlhce.com", "track.webgains.com", "ticketsus.at"]:
             return url
         for amazon in ["amazon.com", "amazon.ca", "amazon.co.uk", "amazon.de", "amazon.fr"]:
-            if netloc.endswith(amazon) and "tag=" in stored_url and not "tag=" in url:
+            if hostname.endswith(amazon) and "tag=" in stored_url and not "tag=" in url:
                 return url
 
         if url.decode("ascii", "ignore") == stored_url.decode("ascii", "ignore"):
