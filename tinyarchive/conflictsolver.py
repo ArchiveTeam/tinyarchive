@@ -55,6 +55,8 @@ class BitlyConflictSolver(ManualConflictSolver):
         stored_netloc = urlparse.urlparse(stored_url).netloc
         if stored_netloc.lower() == netloc:
             return stored_url
+        if stored_netloc[-1] == ":" and stored_netloc[:-1] == netloc:
+            return url
         return super(BitlyConflictSolver, self).solve(code, stored_url, url)
 
 class IsgdConflictSolver(ManualConflictSolver):
@@ -74,7 +76,7 @@ class TinyurlConflictSolver(ManualConflictSolver):
             return url
 
         hostname = urlparse.urlparse(stored_url).hostname
-        if hostname in ["www.pjatr.com", "pjtra.com", "clickserve.cc-dt.com", "www.kqzyfj.com", "www.dpbolvw.net", "click.linksynergy.com", "www.anrdoezrs.net", "www.jdoqocy.com", "ticketsuk.at", "www.awin1.com", "send.onenetworkdirect.net", "www.tkqlhce.com", "track.webgains.com", "ticketsus.at"]:
+        if hostname in ["www.pntra.com", "scripts.affiliatefuture.com", "www.pjatr.com", "pjtra.com", "clickserve.cc-dt.com", "www.kqzyfj.com", "www.dpbolvw.net", "click.linksynergy.com", "www.anrdoezrs.net", "www.jdoqocy.com", "ticketsuk.at", "www.awin1.com", "send.onenetworkdirect.net", "www.tkqlhce.com", "track.webgains.com", "ticketsus.at"]:
             return url
         for amazon in ["amazon.com", "amazon.ca", "amazon.co.uk", "amazon.de", "amazon.fr"]:
             if hostname.endswith(amazon) and "tag=" in stored_url and not "tag=" in url:
