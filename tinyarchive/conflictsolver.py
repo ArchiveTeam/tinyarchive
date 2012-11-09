@@ -66,7 +66,7 @@ class IsgdConflictSolver(ManualConflictSolver):
             return stored_url
         return super(IsgdConflictSolver, self).solve(code, stored_url, url)
 
-class TinyurlConflictSolver(ManualConflictSolver):
+class TinyurlConflictSolver(AutomaticConflictSolver):
 
     def __init__(self, service):
         super(TinyurlConflictSolver, self).__init__(service)
