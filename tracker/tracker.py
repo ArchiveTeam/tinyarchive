@@ -10,6 +10,7 @@ import web
 
 urls = (
     "/", "index",
+    "/data/(current|alltime)", "data",
     "/task/(clear|get|put)", "task",
     "/admin/(cleanup|create|delete|fetch|list)", "admin"
 )
@@ -22,14 +23,29 @@ data_directory = os.path.abspath(os.path.join(directory, "files"))
 class index:
 
     def GET(self):
+        render = web.template.render('templates')
+        return render.index()
+
+class data:
+
+    def GET(self, which):
+        if which == "current":
+            data = self._current()
+        else:
+            data = self._alltime()
+        return json.dumps(data, indent=4, sort_keys=True)
+
+    def _current(self):
         data = {
-            "tasks_free": self.get_tasks("free"),
+            "tasks_available": self.get_tasks("free"),
             "tasks_assigned": self.get_tasks("assigned"),
-            "tasks_done": self.get_tasks("done"),
+            "tasks_finished": self.get_tasks("done"),
             "user_ranking": self.user_ranking()
         }
+        return data
 
-        return json.dumps(data, indent=4, sort_keys=True)
+    def _alltime(self):
+        return None
 
     def get_tasks(self, status):
         result = db.query("""
