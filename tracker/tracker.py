@@ -206,6 +206,8 @@ class admin:
 
         db.update("task", "status = 'assigned' AND timestamp < $timestamp", vars={"timestamp": int(time.time()) - 1800}, timestamp=None, ip_address=None, status="available")
 
+        db.delete("task", "status = 'deleted' AND timestamp < $timestamp", vars={"timestamp": int(time.time()) - 86400})
+
         return ""
 
     def create_task(self):
@@ -233,7 +235,7 @@ class admin:
         if not "id" in parameters:
             raise web.BadRequest()
 
-        db.delete("task", where="id = $id", vars={"id": parameters["id"]})
+        db.update("task", where="id = $id", vars={"id": parameters["id"]}, status="deleted", data_file=None)
 
         return ""
 
