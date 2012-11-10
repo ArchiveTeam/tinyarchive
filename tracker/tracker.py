@@ -65,7 +65,7 @@ class data:
     def user_ranking(self):
         result = db.query("""
             SELECT
-                finished_by AS username,
+                username,
                 COUNT(*) as task_count
             FROM task
             WHERE
@@ -166,13 +166,13 @@ class task:
             fileobj.close()
             data_file = os.path.relpath(fileobj.name, data_directory)
             try:
-                finished_by = parameters["username"][:100]
+                username = parameters["username"][:100]
             except KeyError:
-                finished_by = None
+                username = None
             else:
-                if not re.search("^[-_a-zA-Z0-9]{3,30}$", finished_by):
-                    finished_by = None
-            db.update("task", "id=$id", vars=task, status="done", timestamp=None, ip_address=None, finished_by=finished_by, data_file=data_file)
+                if not re.search("^[-_a-zA-Z0-9]{3,30}$", username):
+                    username = None
+            db.update("task", "id=$id", vars=task, status="done", timestamp=None, ip_address=None, username=username, data_file=data_file)
             return ""
         finally:
             t.commit()

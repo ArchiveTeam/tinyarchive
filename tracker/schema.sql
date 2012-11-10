@@ -11,6 +11,6 @@ CREATE TABLE task (
     generator_options TEXT NOT NULL,
     timestamp INTEGER NULL DEFAULT NULL,
     ip_address TEXT NULL DEFAULT NULL,
-    finished_by TEXT NULL DEFAULT NULL,
+    username TEXT NULL DEFAULT NULL,
     data_file TEXT NULL DEFAULT NULL
 );
