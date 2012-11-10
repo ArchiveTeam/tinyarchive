@@ -104,7 +104,7 @@ class task:
             raise web.HTTPError("403 Forbidden", data="Client version too old. Please update!")
 
     def clear_tasks(self):
-        db.update("task", "status = 'assigned' AND assigned_to = $ip", vars={"ip": web.ctx.ip}, status="free", assigned_when=None, assigned_to=None)
+        db.update("task", "status = 'assigned' AND ip_address = $ip", vars={"ip": web.ctx.ip}, status="free", timestamp=None, ip_address=None)
         return ""
 
     def get_task(self):
@@ -120,7 +120,7 @@ class task:
             WHERE
                 status = 'free' AND
                 service_id NOT IN (
-                    SELECT service_id FROM task WHERE assigned_to = $ip
+                    SELECT service_id FROM task WHERE ip_address = $ip
                 )
             LIMIT 1;
         """,
@@ -131,7 +131,7 @@ class task:
             return "null"
         else:
             task["generator_options"] = json.loads(task["generator_options"])
-            db.update("task", "id=$id", vars=task, status="assigned", assigned_when=int(time.time()), assigned_to=web.ctx.ip)
+            db.update("task", "id=$id", vars=task, status="assigned", timestamp=int(time.time()), ip_address=web.ctx.ip)
             return json.dumps(task, sort_keys=True, indent=4)
         finally:
             t.commit()
@@ -153,7 +153,7 @@ class task:
             WHERE
                 task.id = $id AND
                 status = 'assigned' AND
-                assigned_to = $ip;
+                ip_address = $ip;
         """,
             {"id": parameters["id"], "ip": web.ctx.ip})
         try:
@@ -172,7 +172,7 @@ class task:
             else:
                 if not re.search("^[-_a-zA-Z0-9]{3,30}$", finished_by):
                     finished_by = None
-            db.update("task", "id=$id", vars=task, status="done", assigned_when=None, assigned_to=None, finished_by=finished_by, data_file=data_file)
+            db.update("task", "id=$id", vars=task, status="done", timestamp=None, ip_address=None, finished_by=finished_by, data_file=data_file)
             return ""
         finally:
             t.commit()
@@ -204,7 +204,7 @@ class admin:
         for name in dir_files.difference(db_files):
             os.unlink(os.path.join(data_directory, name))
 
-        db.update("task", "status = 'assigned' AND assigned_when < $assigned_when", vars={"assigned_when": int(time.time()) - 1800}, assigned_when=None, assigned_to=None, status="free")
+        db.update("task", "status = 'assigned' AND timestamp < $timestamp", vars={"timestamp": int(time.time()) - 1800}, timestamp=None, ip_address=None, status="free")
 
         return ""
 
