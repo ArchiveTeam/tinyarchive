@@ -5,7 +5,7 @@ CREATE TABLE service (
 
 CREATE TABLE task (
     id TEXT PRIMARY KEY NOT NULL,
-    status TEXT NOT NULL DEFAULT 'free',
+    status TEXT NOT NULL DEFAULT 'available',
     service_id INTEGER NOT NULL REFERENCES service(id),
     generator_type TEXT NOT NULL,
     generator_options TEXT NOT NULL,

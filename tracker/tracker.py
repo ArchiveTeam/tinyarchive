@@ -37,7 +37,7 @@ class data:
 
     def _current(self):
         data = {
-            "tasks_available": self.get_tasks("free"),
+            "tasks_available": self.get_tasks("available"),
             "tasks_assigned": self.get_tasks("assigned"),
             "tasks_finished": self.get_tasks("done"),
             "user_ranking": self.user_ranking()
@@ -104,7 +104,7 @@ class task:
             raise web.HTTPError("403 Forbidden", data="Client version too old. Please update!")
 
     def clear_tasks(self):
-        db.update("task", "status = 'assigned' AND ip_address = $ip", vars={"ip": web.ctx.ip}, status="free", timestamp=None, ip_address=None)
+        db.update("task", "status = 'assigned' AND ip_address = $ip", vars={"ip": web.ctx.ip}, status="available", timestamp=None, ip_address=None)
         return ""
 
     def get_task(self):
@@ -118,7 +118,7 @@ class task:
             FROM task
             JOIN service ON task.service_id = service.id
             WHERE
-                status = 'free' AND
+                status = 'available' AND
                 service_id NOT IN (
                     SELECT service_id FROM task WHERE ip_address = $ip
                 )
@@ -204,7 +204,7 @@ class admin:
         for name in dir_files.difference(db_files):
             os.unlink(os.path.join(data_directory, name))
 
-        db.update("task", "status = 'assigned' AND timestamp < $timestamp", vars={"timestamp": int(time.time()) - 1800}, timestamp=None, ip_address=None, status="free")
+        db.update("task", "status = 'assigned' AND timestamp < $timestamp", vars={"timestamp": int(time.time()) - 1800}, timestamp=None, ip_address=None, status="available")
 
         return ""
 

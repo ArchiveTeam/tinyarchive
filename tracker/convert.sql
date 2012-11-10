@@ -9,3 +9,5 @@ UPDATE task SET ASSIGNED_TO = NULL;
 ALTER TABLE task ADD COLUMN username TEXT NULL DEFAULT NULL;
 UPDATE task SET username = finished_by;
 UPDATE task SET finished_by = NULL;
+
+UPDATE task SET status = 'available' WHERE status = 'free';
