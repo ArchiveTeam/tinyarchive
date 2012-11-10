@@ -11,3 +11,4 @@ UPDATE task SET username = finished_by;
 UPDATE task SET finished_by = NULL;
 
 UPDATE task SET status = 'available' WHERE status = 'free';
+UPDATE task SET status = 'finished' WHERE status = 'done';

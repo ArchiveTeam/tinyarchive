@@ -39,7 +39,7 @@ class data:
         data = {
             "tasks_available": self.get_tasks("available"),
             "tasks_assigned": self.get_tasks("assigned"),
-            "tasks_finished": self.get_tasks("done"),
+            "tasks_finished": self.get_tasks("finished"),
             "user_ranking": self.user_ranking()
         }
         return data
@@ -69,7 +69,7 @@ class data:
                 COUNT(*) as task_count
             FROM task
             WHERE
-                status = 'done' AND
+                status = 'finished' AND
                 username IS NOT NULL
             GROUP BY username;
         """)
@@ -172,7 +172,7 @@ class task:
             else:
                 if not re.search("^[-_a-zA-Z0-9]{3,30}$", username):
                     username = None
-            db.update("task", "id=$id", vars=task, status="done", timestamp=None, ip_address=None, username=username, data_file=data_file)
+            db.update("task", "id=$id", vars=task, status="finished", timestamp=None, ip_address=None, username=username, data_file=data_file)
             return ""
         finally:
             t.commit()
@@ -263,7 +263,7 @@ class admin:
             FROM task
             JOIN service ON task.service_id = service.id
             WHERE
-                status = 'done';
+                status = 'finished';
         """)
 
         tasks = []
