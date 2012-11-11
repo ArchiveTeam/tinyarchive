@@ -71,9 +71,9 @@ class data:
                 FROM task
                 JOIN service ON task.service_id = service.id
                 WHERE
-                    status = 'finished' AND
+                    (status = 'finished' OR status = 'deleted') AND
                     username IN (
-                        SELECT username FROM task WHERE status = 'finished' GROUP BY username ORDER BY COUNT(*) DESC LIMIT 10
+                        SELECT username FROM task WHERE status = 'finished' OR status = 'deleted' GROUP BY username ORDER BY COUNT(*) DESC LIMIT 10
                     )
                 GROUP BY username, service_id;
             """)
