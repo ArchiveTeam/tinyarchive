@@ -144,12 +144,9 @@ class task:
         t = db.transaction()
         result = db.query("""
             SELECT
-                task.id AS id,
-                service.name AS service,
-                generator_type,
-                generator_options
+                id,
+                service_id
             FROM task
-            JOIN service ON task.service_id = service.id
             WHERE
                 task.id = $id AND
                 status = 'assigned' AND
@@ -173,6 +170,11 @@ class task:
                 if not re.search("^[-_a-zA-Z0-9]{3,30}$", username):
                     username = None
             db.update("task", "id=$id", vars=task, status="finished", timestamp=None, ip_address=None, username=username, data_file=data_file)
+
+            if username:
+                count = db.update("statistics", "username = $username AND service_id = $service_id;", {"username": username, "service_id": task["service_id"]}, count=web.SQLLiteral("count + 1"))
+                if count == 0:
+                    db.insert("statistics", username=username, service_id=task["service_id"], count=1)
             return ""
         finally:
             t.commit()

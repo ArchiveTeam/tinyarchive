@@ -12,3 +12,10 @@ UPDATE task SET finished_by = NULL;
 
 UPDATE task SET status = 'available' WHERE status = 'free';
 UPDATE task SET status = 'finished' WHERE status = 'done';
+
+CREATE TABLE statistics (
+    username TEXT NOT NULL,
+    service_id INTEGER NOT NULL REFERENCES service(id),
+    count INTEGER NOT NULL DEFAULT 0,
+    PRIMARY KEY (username, service_id) ON CONFLICT IGNORE
+);
