@@ -1,8 +1,4 @@
 #tasks div {
-    width: 33%;
     float: left;
     display: block;
-}
-#users div {
-    height: 400px;
 }

@@ -32,12 +32,19 @@ class data:
         data = {
             "tasks_available": self.get_tasks("available"),
             "tasks_assigned": self.get_tasks("assigned"),
-            "tasks_finished": self.get_tasks("finished"),
+            "tasks_finished_day": self.get_tasks("finished"),
+            "tasks_finished_alltime": self.tasks_alltime(),
             "users_alltime": self.users(True),
             "users_day": self.users(False)
         }
         web.header('Content-Type', 'application/json')
         return json.dumps(data, indent=4, sort_keys=True)
+
+    def tasks_alltime(self):
+        data = {}
+        for row in db.select("service", what="name, finished_tasks_count", where="finished_tasks_count > 0"):
+            data[row["name"]] = row["finished_tasks_count"]
+        return data
 
     def users(self, alltime):
         data = []
@@ -208,6 +215,7 @@ class task:
                 count=web.SQLLiteral("count + 1"))
             if count == 0:
                 db.insert("statistics", username=data["username"], service_id=data["service_id"], count=1)
+        db.update("service", "id = $service_id", data, finished_tasks_count = web.SQLLiteral("finished_tasks_count + 1"))
 
         t.commit()
         return ""

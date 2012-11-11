@@ -1,6 +1,7 @@
 CREATE TABLE service (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    name TEXT NOT NULL
+    name TEXT NOT NULL,
+    finished_tasks_count INTEGER NOT NULL DEFAULT 0,
 );
 
 CREATE TABLE task (

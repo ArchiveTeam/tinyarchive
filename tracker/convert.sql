@@ -19,3 +19,5 @@ CREATE TABLE statistics (
     count INTEGER NOT NULL DEFAULT 0,
     PRIMARY KEY (username, service_id) ON CONFLICT IGNORE
 );
+
+ALTER TABLE service ADD COLUMN finished_tasks_count INTEGER NOT NULL DEFAULT 0;
