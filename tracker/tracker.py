@@ -141,43 +141,45 @@ class task:
         if not "id" in parameters or not web.data():
             raise web.BadRequest()
 
-        t = db.transaction()
-        result = db.query("""
-            SELECT
-                id,
-                service_id
-            FROM task
-            WHERE
-                task.id = $id AND
-                status = 'assigned' AND
-                ip_address = $ip;
-        """,
-            {"id": parameters["id"], "ip": web.ctx.ip})
+        # Find out username
+        username = None
         try:
-            task = result[0]
-        except IndexError:
-            raise web.Conflict()
-        else:
-            fileobj = tempfile.NamedTemporaryFile(dir=data_directory, delete=False)
-            fileobj.write(web.data())
-            fileobj.close()
-            data_file = os.path.relpath(fileobj.name, data_directory)
-            try:
-                username = parameters["username"][:100]
-            except KeyError:
-                username = None
-            else:
-                if not re.search("^[-_a-zA-Z0-9]{3,30}$", username):
-                    username = None
-            db.update("task", "id=$id", vars=task, status="finished", timestamp=None, ip_address=None, username=username, data_file=data_file)
+            if re.search("^[-_a-zA-Z0-9]{3,30}$", parameters["username"]):
+                username = parameters["username"]
+        except KeyError:
+            pass
 
-            if username:
-                count = db.update("statistics", "username = $username AND service_id = $service_id;", {"username": username, "service_id": task["service_id"]}, count=web.SQLLiteral("count + 1"))
-                if count == 0:
-                    db.insert("statistics", username=username, service_id=task["service_id"], count=1)
-            return ""
-        finally:
-            t.commit()
+        # Create output file
+        fileobj = tempfile.NamedTemporaryFile(dir=data_directory, delete=False)
+        fileobj.write(web.data())
+        fileobj.close()
+        data_file = os.path.relpath(fileobj.name, data_directory)
+
+        # Mark task as finished
+        t = db.transaction()
+        count = db.update("task",
+            "id = $id AND status = 'assigned' AND ip_address = $ip",
+            vars = {"id": parameters["id"], "ip": web.ctx.ip},
+            status="finished", timestamp=int(time.time()), ip_address=None, username=username, data_file=data_file
+        )
+
+        # If task was not properly assigned, we get 0 changed rows
+        if count != 1:
+            t.rollback()
+            raise web.Conflict()
+
+        # Update statistics
+        if username:
+            data = db.select("task", what="username, service_id", where="id = $id", vars={"id": parameters["id"]})[0]
+            count = db.update("statistics",
+                "username = $username AND service_id = $service_id",
+                data,
+                count=web.SQLLiteral("count + 1"))
+            if count == 0:
+                db.insert("statistics", username=data["username"], service_id=data["service_id"], count=1)
+
+        t.commit()
+        return ""
 
 class admin:
 
