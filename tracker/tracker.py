@@ -282,7 +282,7 @@ class admin:
             service_id = db.insert("service", name=parameters["service"])
 
         task_id = str(uuid.uuid1())
-        db.insert("task", id=task_id, service_id=service_id, generator_type=parameters["generator_type"], generator_options=parameters["generator_options"])
+        db.insert("task", id=task_id, status="available", service_id=service_id, generator_type=parameters["generator_type"], generator_options=parameters["generator_options"])
 
         t.commit()
 
