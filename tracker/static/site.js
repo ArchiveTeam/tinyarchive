@@ -2,14 +2,15 @@ google.load("visualization", "1.0", {"packages":["corechart"]});
 google.setOnLoadCallback(update);
 
 function update() {
-    new Request.JSON({"url": "data/current", "onSuccess": redraw}).get();
+    new Request.JSON({"url": "data/", "onSuccess": redraw}).get();
 }
 
 function redraw(responseJSON, responseText) {
     draw_tasks("tasks_available", "Available tasks", responseJSON);
     draw_tasks("tasks_assigned", "Assigned tasks", responseJSON);
     draw_tasks("tasks_finished", "Finished tasks", responseJSON);
-    draw_users("user_ranking", "User ranking", responseJSON);
+    draw_users("users_alltime", "Top 10 users (all time)", responseJSON);
+    draw_users("users_day", "Top 10 users (24 hours)", responseJSON);
 }
 
 function draw_tasks(id, title, data) {
@@ -26,14 +27,9 @@ function draw_tasks(id, title, data) {
 }
 
 function draw_users(id, title, data) {
-    var gdata = new google.visualization.DataTable();
-    gdata.addColumn("string", "Username");
-    gdata.addColumn("number", "Finished tasks");
+    var gdata = google.visualization.arrayToDataTable(data[id]);
 
-    for (var user in data[id])
-            gdata.addRow([user, data[id][user]]);
-
-    var options = {"title": title};
+    var options = {"title": title, "isStacked": true};
     var chart = new google.visualization.BarChart(document.getElementById(id));
     chart.draw(gdata, options);
 }

@@ -10,7 +10,7 @@ import web
 
 urls = (
     "/", "index",
-    "/data/(current|alltime)", "data",
+    "/data/", "data",
     "/task/(clear|get|put)", "task",
     "/admin/(cleanup|create|delete|fetch|list)", "admin"
 )
@@ -28,24 +28,71 @@ class index:
 
 class data:
 
-    def GET(self, which):
-        if which == "current":
-            data = self._current()
-        else:
-            data = self._alltime()
-        return json.dumps(data, indent=4, sort_keys=True)
-
-    def _current(self):
+    def GET(self):
         data = {
             "tasks_available": self.get_tasks("available"),
             "tasks_assigned": self.get_tasks("assigned"),
             "tasks_finished": self.get_tasks("finished"),
-            "user_ranking": self.user_ranking()
+            "users_alltime": self.users(True),
+            "users_day": self.users(False)
         }
-        return data
+        web.header('Content-Type', 'application/json')
+        return json.dumps(data, indent=4, sort_keys=True)
 
-    def _alltime(self):
-        return None
+    def users(self, alltime):
+        data = []
+
+        if alltime:
+            result = db.query("""
+                SELECT
+                    username,
+                    service.name AS service,
+                    count
+                FROM statistics
+                JOIN service ON statistics.service_id = service.id
+                WHERE
+                    username IN (
+                        SELECT username FROM statistics GROUP BY username ORDER BY SUM(count) DESC LIMIT 10
+                    );
+                """)
+        else:
+            result = db.query("""
+                SELECT
+                    username,
+                    service.name AS service,
+                    COUNT(*) AS count
+                FROM task
+                JOIN service ON task.service_id = service.id
+                WHERE
+                    status = 'finished' AND
+                    username IN (
+                        SELECT username FROM task WHERE status = 'finished' GROUP BY username ORDER BY COUNT(*) DESC LIMIT 10
+                    )
+                GROUP BY username, service_id;
+            """)
+
+        users = {}
+        services = set()
+        data = []
+
+        for row in result:
+            services.add(row["service"])
+            if not row["username"] in users:
+                users[row["username"]] = {}
+            users[row["username"]][row["service"]] = row["count"]
+        services = sorted(services)
+
+        for username, counts in users.items():
+            row = [username]
+            for service in services:
+                if service in counts:
+                    row.append(counts[service])
+                else:
+                    row.append(0)
+            data.append(row)
+
+        data = [(["Username"] + services)] + sorted(data, key=lambda x: sum(x[1:]), reverse=True)
+        return data
 
     def get_tasks(self, status):
         result = db.query("""
@@ -60,22 +107,6 @@ class data:
         data = {}
         for row in result:
             data[row["service"]] = row["task_count"]
-        return data
-
-    def user_ranking(self):
-        result = db.query("""
-            SELECT
-                username,
-                COUNT(*) as task_count
-            FROM task
-            WHERE
-                status = 'finished' AND
-                username IS NOT NULL
-            GROUP BY username;
-        """)
-        data = {}
-        for row in result:
-            data[row["username"]] = row["task_count"]
         return data
 
 class task:
