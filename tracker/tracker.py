@@ -32,7 +32,7 @@ class data:
         data = {
             "tasks_available": self.get_tasks("available"),
             "tasks_assigned": self.get_tasks("assigned"),
-            "tasks_finished_day": self.get_tasks("finished"),
+            "tasks_finished_day": self.tasks_finished(),
             "tasks_finished_alltime": self.tasks_alltime(),
             "users_alltime": self.users(True),
             "users_day": self.users(False)
@@ -99,6 +99,21 @@ class data:
             data.append(row)
 
         data = [(["Username"] + services)] + sorted(data, key=lambda x: sum(x[1:]), reverse=True)
+        return data
+
+    def tasks_finished(self):
+        result = db.query("""
+            SELECT
+                service.name AS service,
+                COUNT(*) AS task_count
+            FROM task
+            JOIN service ON task.service_id = service.id
+            WHERE status = 'finished' OR status = 'deleted'
+            GROUP BY service.id;
+        """)
+        data = {}
+        for row in result:
+            data[row["service"]] = row["task_count"]
         return data
 
     def get_tasks(self, status):
