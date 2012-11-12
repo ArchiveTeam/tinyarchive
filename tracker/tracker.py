@@ -71,12 +71,12 @@ class data:
                 FROM task
                 JOIN service ON task.service_id = service.id
                 WHERE
-                    (status = 'finished' OR status = 'deleted') AND
+                    username IS NOT NULL AND timestamp > $timestamp AND
                     username IN (
-                        SELECT username FROM task WHERE status = 'finished' OR status = 'deleted' GROUP BY username ORDER BY COUNT(*) DESC LIMIT 10
+                        SELECT username FROM task WHERE username IS NOT NULL AND timestamp > $timestamp GROUP BY username ORDER BY COUNT(*) DESC LIMIT 10
                     )
                 GROUP BY username, service_id;
-            """)
+            """, vars={"timestamp": int(time.time()) - 86400})
 
         users = {}
         services = set()
@@ -108,9 +108,11 @@ class data:
                 COUNT(*) AS task_count
             FROM task
             JOIN service ON task.service_id = service.id
-            WHERE status = 'finished' OR status = 'deleted'
+            WHERE
+                (status = 'finished' OR status = 'deleted') AND
+                timestamp > $timestamp
             GROUP BY service.id;
-        """)
+        """, vars={"timestamp": int(time.time()) - 86400})
         data = {}
         for row in result:
             data[row["service"]] = row["task_count"]
