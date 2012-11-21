@@ -1,5 +1,6 @@
 from bsddb3 import db
 import itertools
+import logging
 import os
 import urlparse
 
@@ -9,6 +10,8 @@ import tinyarchive.utils
 class DBManager:
 
     def __init__(self, database_directory):
+        self._log = logging.getLogger("tinyarchive.database.DBManager")
+        self._log.info("Opening database environment at %s" % database_directory)
         self._database_directory = os.path.abspath(database_directory)
         self._env = db.DBEnv()
         self._env.set_data_dir(os.path.join(self._database_directory, "data"))
@@ -21,6 +24,7 @@ class DBManager:
             if filename[-3:] != ".db":
                 continue
             databases.append(filename[:-3])
+        self._log.info("Found %i databases" % len(databases))
         return databases
 
     def get(self, name):
@@ -28,10 +32,10 @@ class DBManager:
             raise ValueError("Trying to use closed DBManager")
         if not name in self._databases:
             self._databases[name] = Database(name, self._env)
-
         return self._databases[name]
 
     def close(self):
+        self._log.info("Closing DBManager")
         if self._env:
             for database in self._databases.values():
                 database.close()
@@ -45,6 +49,8 @@ class Database:
         return self._service
 
     def __init__(self, service, db_env):
+        self._log = logging.getLogger("tinyarchive.database.Database")
+        self._log.info("Opening database for service '%s'" % service)
         self._service = service
         self._db = db.DB(dbEnv=db_env)
         self._db.set_bt_compare(tinyarchive.utils.shortcode_compare)
@@ -79,6 +85,7 @@ class Database:
 
     def close(self):
         if self._db != None:
+            self._log.debug("Closing database for service '%s'" % self._service)
             self._db.close()
             self._db = None
 
