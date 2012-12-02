@@ -12,7 +12,7 @@ urls = (
     "/", "index",
     "/data/", "data",
     "/task/(clear|get|put)", "task",
-    "/admin/(cleanup|create|delete|fetch|list)", "admin"
+    "/admin/(cleanup|create|delete|fetch|list|ratelimit)", "admin"
 )
 app = web.application(urls, globals())
 
@@ -253,9 +253,15 @@ class admin:
             return self.fetch_data()
         elif action == "list":
             return self.list_tasks()
+        elif action == "ratelimit":
+            return self.ratelimit()
 
     def POST(self, action):
         return self.GET(action)
+
+    def ratelimit(self):
+        db.query("UPDATE task SET status = 'available' WHERE id IN (SELECT id FROM task WHERE status = 'paused' AND service_id = 6 LIMIT MIN(6, 6 - (SELECT COUNT(*) FROM task WHERE service_id = 6 AND (status = 'assigned' OR status = 'available'))));")
+        return "ok"
 
     def cleanup(self):
         dir_files = set(os.listdir(data_directory))
