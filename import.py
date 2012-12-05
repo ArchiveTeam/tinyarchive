@@ -51,6 +51,7 @@ def import_file(metadata, data_file, database):
             log.fatal("Task %s does not match generator" % metadata["id"])
             return False
 
+    os.remove(data_file)
     return True
 
 def main():
@@ -62,6 +63,7 @@ def main():
     db_manager = tinyarchive.database.DBManager(options.database_directory)
     log = logging.getLogger("main")
 
+    failed = 0
     log.info("Importing %i files" % len(files))
     for input_file in files:
         with open(input_file) as fileobj:
@@ -73,10 +75,12 @@ def main():
             break
 
         if not import_file(metadata, data_file, db_manager.get(metadata["service"])):
-            log.fatal("Error while importing file")
-            break
+            log.error("Error while importing file")
+            failed += 1
+        else:
+            os.remove(input_file)
     else:
-        log.info("Successfully inished import")
+        log.info("Finished import with %i files failing import" % failed)
 
     db_manager.close()
 
