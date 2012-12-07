@@ -342,3 +342,6 @@ class admin:
         return json.dumps(tasks, sort_keys=True, indent=4)
 
 application = app.wsgifunc()
+
+if __name__ == "__main__":
+    app.run()
