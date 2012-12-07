@@ -224,8 +224,8 @@ class task:
             raise web.Conflict()
 
         # Update statistics
+        data = db.select("task", what="username, service_id", where="id = $id", vars={"id": parameters["id"]})[0]
         if username:
-            data = db.select("task", what="username, service_id", where="id = $id", vars={"id": parameters["id"]})[0]
             count = db.update("statistics",
                 "username = $username AND service_id = $service_id",
                 data,
