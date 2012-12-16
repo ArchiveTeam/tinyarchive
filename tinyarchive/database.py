@@ -55,13 +55,14 @@ class Database:
         self._db = db.DB(dbEnv=db_env)
         self._db.set_bt_compare(tinyarchive.utils.shortcode_compare)
         self._db.open("%s.db" % service, dbname=service, dbtype=db.DB_BTREE, flags=db.DB_CREATE)
+        self._cursor = None
 
     def get(self, code):
         if self._db == None:
             raise ValueError("Trying to use closed Database")
         try:
             return self._db.get(code)
-        except db.DBNoutFoundError:
+        except db.DBNotFoundError:
             raise AttributeError("Code %s not found" % code)
 
     def set(self, code, url):
@@ -84,10 +85,41 @@ class Database:
         self._db.delete(code)
 
     def close(self):
+        if self._cursor != None:
+            self._log.debug("Closing cursor for service '%s'" % self._service)
+            self._cursor.close()
+            self._cursor = None
         if self._db != None:
             self._log.debug("Closing database for service '%s'" % self._service)
             self._db.close()
             self._db = None
 
     def __len__(self):
+        if self._db == None:
+            raise ValueError("Trying to use closed Database")
         return len(self._db)
+
+    def __iter__(self):
+        if self._db == None:
+            raise ValueError("Trying to use closed Database")
+        if self._cursor != None:
+            raise ValueError("Only one Cursor can be used at a time")
+        self._cursor = self._db.cursor()
+        return self
+
+    def next(self):
+        if self._cursor == None:
+            print("asd")
+            raise StopIteration()
+        try:
+            result = self._cursor.get(flags=db.DB_NEXT)
+            # According to BerkeleyDB docs, this should throw a DBNotFoundError
+            # when we are at the last entry. Python BSDDB3 4.8.3-3 however does
+            # return None instead, so we just pretend it is throwing that
+            # error.
+            if result == None:
+                raise db.DBNotFoundError
+            return result
+        except db.DBNotFoundError:
+            raise StopIteration()
+            self._cursor = None
