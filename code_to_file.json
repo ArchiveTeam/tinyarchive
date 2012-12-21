@@ -1,4 +1,10 @@
 {
+    "0daymemecom": [
+        {"file": "url.0daymeme.com"}
+    ],
+    "4urlcc": [
+        {"file": "4url.cc"}
+    ],
     "bitly": [
         {"start": "0", "stop": "____",  "file": "bit.ly/0-____"},
         {"start": "-0000", "stop": "-____", "file": "bit.ly/-0000--____"},
@@ -4034,7 +4040,10 @@
         {"start": "Z-0000", "stop": "Z-____", "file": "bit.ly/Z00000-Z_____ (uppercase)/Z-0000-Z-____"},
         {"start": "Z_0000", "stop": "Z_____", "file": "bit.ly/Z00000-Z_____ (uppercase)/Z_0000-Z_____"},
         {"start": "-00000", "stop": "-_____", "file": "bit.ly/-00000--_____"},
-        {"start", "_00000", "stop": "______", "file": "bit.ly/_00000-______"}
+        {"start": "_00000", "stop": "______", "file": "bit.ly/_00000-______"}
+    ],
+    "ffim": [
+        {"file": "ff.im"}
     ],
     "isgd": [
         {"start": "0", "stop": "____", "file": "is.gd/0-____"},
@@ -4101,8 +4110,11 @@
         {"start": "Y0000", "stop": "Y____", "file": "is.gd/A0000-A____ (uppercase)/Y0000-Y____"},
         {"start": "Z0000", "stop": "Z____", "file": "is.gd/A0000-A____ (uppercase)/Z0000-Z____"}
     ],
-    "ur1ca": [
-        {"file": "ur1.ca"}
+    "klam": [
+        {"file": "kl.am"}
+    ],
+    "litturlcom": [
+        {"file": "litturl.com"}
     ],
     "owly": [
         {"start": "0", "stop": "ZZZZ", "file": "ow.ly/0-ZZZZ"},
@@ -4115,10 +4127,23 @@
         {"start": "60000", "stop": "6ZZZZ", "file": "ow.ly/00000-9ZZZZ/60000-6ZZZZ"},
         {"start": "70000", "stop": "7ZZZZ", "file": "ow.ly/00000-9ZZZZ/70000-7ZZZZ"},
         {"start": "80000", "stop": "8ZZZZ", "file": "ow.ly/00000-9ZZZZ/80000-8ZZZZ"},
-        {"start": "90000", "stop": "9ZZZZ", "file": "ow.ly/00000-9ZZZZ/90000-9ZZZZ"}
+        {"start": "90000", "stop": "9ZZZZ", "file": "ow.ly/00000-9ZZZZ/90000-9ZZZZ"},
+        {"start": "a0000", "stop": "aZZZZ", "file": "ow.ly/a0000-zZZZZ/a0000-aZZZZ"},
+        {"start": "b0000", "stop": "bZZZZ", "file": "ow.ly/a0000-zZZZZ/b0000-bZZZZ"},
+        {"start": "c0000", "stop": "cZZZZ", "file": "ow.ly/a0000-zZZZZ/c0000-cZZZZ"},
+        {"start": "d0000", "stop": "dZZZZ", "file": "ow.ly/a0000-zZZZZ/d0000-dZZZZ"},
+        {"start": "e0000", "stop": "eZZZZ", "file": "ow.ly/a0000-zZZZZ/e0000-eZZZZ"},
+        {"start": "f0000", "stop": "fZZZZ", "file": "ow.ly/a0000-zZZZZ/f0000-fZZZZ"},
+        {"start": "g0000", "stop": "gZZZZ", "file": "ow.ly/a0000-zZZZZ/g0000-gZZZZ"}
     ],
-    "klam": [
-        {"file": "kl.am"}
+    "pulseme": [
+        {"file": "pulse.me"}
+    ],
+    "snipurl": [
+        {"file": "snipurl.com"}
+    ],
+    "surlws": [
+        {"file": "surl.ws"}
     ],
     "tinyurl": [
         {"start": "0", "stop": "zzzz", "file": "tinyurl.com/0-zzzz"},
@@ -4194,6 +4219,18 @@
         {"start": "x00000", "stop": "xzzzzz", "file": "tinyurl.com/a00000-azzzzz/x00000-xzzzzz"},
         {"start": "y00000", "stop": "yzzzzz", "file": "tinyurl.com/a00000-azzzzz/y00000-yzzzzz"},
         {"start": "z00000", "stop": "zzzzzz", "file": "tinyurl.com/a00000-azzzzz/z00000-zzzzzz"}
+    ],
+    "trim": [
+        {"file": "tr.im"}
+    ],
+    "ur1ca": [
+        {"file": "ur1.ca"}
+    ],
+    "xsmd": [
+        {"file": "xs.md"}
+    ],
+    "xymkr": [
+        {"file": "xym.kr"}
     ]
 }
 
