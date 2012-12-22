@@ -1,10 +1,13 @@
 #!/usr/bin/env python
 
+import logging
 import re
 import sys
 import urlparse
 
 import tinyarchive.database
+
+logging.basicConfig(level=logging.DEBUG, format="%(name)s: %(message)s")
 
 db_manager = tinyarchive.database.DBManager(sys.argv[1])
 
@@ -28,11 +31,11 @@ for line in sys.stdin:
     if not ps.hostname:
         continue
 
-    if ps.path and ps.path[0] != "/":
-        code = ps.path[1:]
     code = None
     service = None
     verify = False
+    if ps.path and ps.path[0] == "/":
+        code = ps.path[1:]
 
     if ps.hostname in bitly_pro_hosts or ps.hostname in ["bit.ly", "j.mp", "bitly.com"]:
         service = "bitly"
@@ -198,8 +201,6 @@ for line in sys.stdin:
         continue
     elif ps.hostname == "y.ahoo.it": # URLs are not stable
         continue
-    elif ps.hostname == "owl.li":
-        print line[:-1]
 
     if service and code:
         if verify:
