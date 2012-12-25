@@ -289,8 +289,13 @@ class admin:
         except IndexError:
             service_id = db.insert("service", name=parameters["service"])
 
+        if service_id == 6:
+            status = "paused"
+        else:
+            status = "available"
+
         task_id = str(uuid.uuid1())
-        db.insert("task", id=task_id, status="available", service_id=service_id, generator_type=parameters["generator_type"], generator_options=parameters["generator_options"])
+        db.insert("task", id=task_id, status=status, service_id=service_id, generator_type=parameters["generator_type"], generator_options=parameters["generator_options"])
 
         t.commit()
 
