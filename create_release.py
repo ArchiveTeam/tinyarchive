@@ -44,10 +44,10 @@ def parse_options():
 
 def load_directories(directory):
     directory = os.path.abspath(directory)
-    files = []
+    files = set()
     for (dirpath, dirnames, filenames) in os.walk(directory):
         for filename in filenames:
-            files.append(os.path.join(dirpath, filename)[len(directory)+1:])
+            files.add(os.path.join(dirpath, filename)[len(directory)+1:])
     return files
 
 def main():
@@ -71,11 +71,13 @@ def main():
                 if output:
                     output.close()
                 mapping = code_to_file_map.get_mapping(service, key)
+                files.remove(mapping["file"])
                 output = tinyarchive.utils.OutputFile(options.old_release, options.new_release, mapping["file"])
             output.write(key, value)
         if output:
             output.close()
 
+    print "Remainig files: %s" % repr(list(files))
     db_manager.close()
 
 if __name__ == "__main__":
