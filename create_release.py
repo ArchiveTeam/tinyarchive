@@ -61,8 +61,6 @@ def main():
     code_to_file_map = tinyarchive.utils.CodeToFileMap(options.code_to_file_map)
 
     for service in db_manager.list():
-        if service in ["owly"]:
-            continue
         db = db_manager.get(service)
         mapping = None
         output = None

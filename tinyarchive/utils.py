@@ -136,4 +136,4 @@ class OutputFile:
             shutil.copyfile(self._old_file + ".txt.xz", self._new_file + ".txt.xz")
         else:
             self._log.info("File changed since last release")
-            subprocess.check_call(["xz", "-1", self._new_file + ".txt"])
+            subprocess.check_call(["xz", "-9", self._new_file + ".txt"])
