@@ -24,6 +24,8 @@ class index:
 
     def GET(self):
         render = web.template.render('templates')
+        web.header("Cache-Control", "public")
+        web.http.expires(60)
         return render.index()
 
 class data:
@@ -37,7 +39,9 @@ class data:
             "users_alltime": self.users(True),
             "users_day": self.users(False)
         }
-        web.header('Content-Type', 'application/json')
+        web.header("Content-Type", "application/json")
+        web.header("Cache-Control", "public")
+        web.http.expires(60)
         return json.dumps(data, indent=4, sort_keys=True)
 
     def tasks_alltime(self):
@@ -136,6 +140,7 @@ class data:
 class task:
 
     def GET(self, action):
+        web.header("Cache-Control", "no-cache")
         self.check_version()
 
         if action == "get":
@@ -146,6 +151,7 @@ class task:
         raise web.HTTPError("405 Method Not Allowed")
 
     def POST(self, action):
+        web.header("Cache-Control", "no-cache")
         self.check_version()
 
         if action == "put":
@@ -240,6 +246,7 @@ class task:
 class admin:
 
     def GET(self, action):
+        web.header("Cache-Control", "no-cache")
         if web.ctx.ip != "127.0.0.1":
             raise web.Forbidden()
 
