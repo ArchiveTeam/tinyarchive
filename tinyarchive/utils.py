@@ -121,7 +121,7 @@ class OutputFile:
         s.wait()
         assert s.communicate()[0][:32] == new_hash
 
-        if os.path.isfile(self._old_file + ".txt.xz") and False:
+        if os.path.isfile(self._old_file + ".txt.xz"):
             s = subprocess.Popen("xzcat '%s.txt.xz' | md5sum" % self._old_file, shell=True, stdout=subprocess.PIPE)
             s.wait()
             old_hash = s.communicate()[0][:32]

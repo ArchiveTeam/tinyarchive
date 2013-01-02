@@ -69,13 +69,15 @@ def main():
                 if output:
                     output.close()
                 mapping = code_to_file_map.get_mapping(service, key)
-                files.remove(mapping["file"])
+                filename = mapping["file"] + ".txt.xz"
+                if filename in old_release_files:
+                    old_release_files.remove(filename)
                 output = tinyarchive.utils.OutputFile(options.old_release, options.new_release, mapping["file"])
             output.write(key, value)
         if output:
             output.close()
 
-    print "Remainig files: %s" % repr(list(files))
+    print "Remainig files: %s" % repr(list(old_release_files))
     db_manager.close()
 
 if __name__ == "__main__":
