@@ -4201,7 +4201,9 @@
         {"start": "g0000", "stop": "gZZZZ", "file": "ow.ly/a0000-zZZZZ/g0000-gZZZZ"}
     ],
     "snipurl": [
-        {"file": "snipurl.com"}
+        {"start": "2000000", "stop": "20~~~~~", "file": "snipurl.com/2000000-20~~~~~"},
+        {"start": "2100000", "stop": "21~~~~~", "file": "snipurl.com/2100000-21~~~~~"},
+        {"start": "2200000", "stop": "22~~~~~", "file": "snipurl.com/2200000-22~~~~~"}
     ],
     "surlws": [
         {"file": "surl.ws"}
