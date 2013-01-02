@@ -4281,6 +4281,9 @@
         {"start": "y00000", "stop": "yzzzzz", "file": "tinyurl.com/a00000-azzzzz/y00000-yzzzzz"},
         {"start": "z00000", "stop": "zzzzzz", "file": "tinyurl.com/a00000-azzzzz/z00000-zzzzzz"}
     ],
+    "tnyim": [
+        {"file": "tny.im"}
+    ],
     "trim": [
         {"file": "tr.im"}
     ],
