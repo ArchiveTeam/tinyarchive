@@ -62,7 +62,7 @@ class BitlyConflictSolver(ManualConflictSolver):
 class IsgdConflictSolver(ManualConflictSolver):
 
     def solve(self, code, stored_url, url):
-        if len(stored_url) > 999 and stored_url[:999] == url:
+        if len(stored_url) > 1000 and stored_url[:len(url)] == url:
             return stored_url
         return super(IsgdConflictSolver, self).solve(code, stored_url, url)
 
