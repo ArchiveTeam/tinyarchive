@@ -76,11 +76,12 @@ class TinyurlConflictSolver(AutomaticConflictSolver):
             return url
 
         hostname = urlparse.urlparse(stored_url).hostname
-        if hostname in ["www.pntra.com", "scripts.affiliatefuture.com", "www.pjatr.com", "pjtra.com", "clickserve.cc-dt.com", "www.kqzyfj.com", "www.dpbolvw.net", "click.linksynergy.com", "www.anrdoezrs.net", "www.jdoqocy.com", "ticketsuk.at", "www.awin1.com", "send.onenetworkdirect.net", "www.tkqlhce.com", "track.webgains.com", "ticketsus.at"]:
-            return url
-        for amazon in ["amazon.com", "amazon.ca", "amazon.co.uk", "amazon.de", "amazon.fr"]:
-            if hostname.endswith(amazon) and "tag=" in stored_url and not "tag=" in url:
+        if hostname:
+            if hostname in ["www.pntra.com", "scripts.affiliatefuture.com", "www.pjatr.com", "pjtra.com", "clickserve.cc-dt.com", "www.kqzyfj.com", "www.dpbolvw.net", "click.linksynergy.com", "www.anrdoezrs.net", "www.jdoqocy.com", "ticketsuk.at", "www.awin1.com", "send.onenetworkdirect.net", "www.tkqlhce.com", "track.webgains.com", "ticketsus.at"]:
                 return url
+            for amazon in ["amazon.com", "amazon.ca", "amazon.co.uk", "amazon.de", "amazon.fr"]:
+                if hostname.endswith(amazon) and "tag=" in stored_url and not "tag=" in url:
+                    return url
 
         if url.decode("ascii", "ignore") == stored_url.decode("ascii", "ignore"):
             self._service = tinyback.services.factory("tinyurl")
