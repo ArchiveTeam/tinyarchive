@@ -12,7 +12,7 @@ urls = (
     "/", "index",
     "/data/", "data",
     "/task/(clear|get|put)", "task",
-    "/admin/(cleanup|create|delete|fetch|list|ratelimit)", "admin"
+    "/admin/(cleanup|create|delete|fetch|list)", "admin"
 )
 app = web.application(urls, globals())
 
@@ -260,15 +260,9 @@ class admin:
             return self.fetch_data()
         elif action == "list":
             return self.list_tasks()
-        elif action == "ratelimit":
-            return self.ratelimit()
 
     def POST(self, action):
         return self.GET(action)
-
-    def ratelimit(self):
-        db.query("UPDATE task SET status = 'available' WHERE id IN (SELECT id FROM task WHERE status = 'paused' AND service_id = 6 LIMIT MIN(6, 6 - (SELECT COUNT(*) FROM task WHERE service_id = 6 AND (status = 'assigned' OR status = 'available'))));")
-        return "ok"
 
     def cleanup(self):
         dir_files = set(os.listdir(data_directory))
@@ -296,13 +290,8 @@ class admin:
         except IndexError:
             service_id = db.insert("service", name=parameters["service"])
 
-        if service_id == 6:
-            status = "paused"
-        else:
-            status = "available"
-
         task_id = str(uuid.uuid1())
-        db.insert("task", id=task_id, status=status, service_id=service_id, generator_type=parameters["generator_type"], generator_options=parameters["generator_options"])
+        db.insert("task", id=task_id, status="available", service_id=service_id, generator_type=parameters["generator_type"], generator_options=parameters["generator_options"])
 
         t.commit()
 
