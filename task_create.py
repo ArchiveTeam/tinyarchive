@@ -13,6 +13,9 @@ def count_sequence(charset, count, start):
             return code
 
 def sequence_from_to(tracker, service, charset, start, stop, count):
+    if tinyarchive.utils.shortcode_compare(start, stop) > 0:
+        raise ValueError("Start must not be bigger than stop")
+
     generator_options = {
         "charset": charset,
         "start": start,
