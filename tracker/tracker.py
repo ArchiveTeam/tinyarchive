@@ -183,7 +183,6 @@ class task:
                 service_id NOT IN (
                     SELECT service_id FROM task WHERE ip_address = $ip
                 )
-            ORDER BY service_id DESC
             LIMIT 1;
         """,
             {"ip": web.ctx.ip})
