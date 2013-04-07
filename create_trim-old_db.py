@@ -3,7 +3,9 @@
 from bsddb3 import db
 import logging
 import optparse
+import os
 import os.path
+import sqlite3
 from urlparse import urlparse
 
 import tinyarchive.database
@@ -38,9 +40,11 @@ def main():
     trim_old = db_manager.get("trim")
     trim_new = db_manager.get("trimnew")
 
-    mappingdb = db.DB()
-    flags = db.DB_CREATE | db.DB_TRUNCATE
-    mappingdb.open(os.path.abspath(options.output_file), dbtype=db.DB_HASH, flags=flags)
+    if os.path.exists(options.output_file):
+        os.unlink(options.output_file)
+    mappingdb = sqlite3.connect(options.output_file)
+    cursor = mappingdb.cursor()
+    cursor.execute("CREATE TABLE trim_link (internal_code TEXT, trim_code TEXT, url BLOB)")
 
     for (code, url) in trim_new:
         try:
@@ -52,13 +56,16 @@ def main():
             if not internal_code:
                 continue
             real_url = trim_old.get(code)
-            if real_url:
-                mapping = code + "|" + real_url
-            else:
-                mapping = code
-            mappingdb.put(internal_code, mapping, flags=db.DB_NOOVERWRITE)
+            if not real_url:
+                continue
+            cursor.execute("INSERT INTO trim_link VALUES (?, ?, ?)", (internal_code, code, buffer(real_url)))
 
+    cursor.execute("CREATE INDEX trim_link_internal_code_idx ON trim_link(internal_code)")
+    cursor.execute("VACUUM")
+    mappingdb.commit()
+    cursor.close()
     mappingdb.close()
+
     db_manager.close()
 
 if __name__ == "__main__":
