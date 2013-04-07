@@ -9,9 +9,10 @@ DB](https://en.wikipedia.org/wiki/Berkeley_DB) B-Tree databases that contain
 mappings from short url codes to long URLs. For each shortener there is one
 database. For example, the database bitly.db might contain the following
 mappings:
-    * a -> http://apple.com
-    * b -> http://bit.ly/2lkCBm
-    * c -> http://www.timwilson.us
+
+* a -> http://apple.com
+* b -> http://bit.ly/2lkCBm
+* c -> http://www.timwilson.us
 
 ## Tracker
 The tracker is a completely separate application that hands out tasks to
