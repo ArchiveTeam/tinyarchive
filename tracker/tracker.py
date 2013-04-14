@@ -159,7 +159,7 @@ class task:
         raise web.HTTPError("405 Method Not Allowed")
 
     def check_version(self):
-        allowed_versions = ["2.8", "2.9", "2.10", "2.11", "2.12", "2.13", "2.14"]
+        allowed_versions = ["2.11", "2.12", "2.13", "2.14", "2.15", "2.16", "2.17"]
         parameters = web.input(_method='GET')
         if not "version" in parameters or parameters["version"] not in allowed_versions:
             raise web.HTTPError("403 Forbidden", data="Client version too old. Please update!")
