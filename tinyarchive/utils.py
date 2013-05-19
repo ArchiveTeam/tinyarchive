@@ -81,6 +81,7 @@ class CodeToFileMap:
                     return mapping
         raise ValueError("No mapping for service '%s', code '%s' found" % (service, start))
 
+
     def check_mapping(self, mapping, stop):
         if not "stop" in mapping:
             return True
@@ -88,6 +89,13 @@ class CodeToFileMap:
 
     def _compare_mapping(self, x, y):
         return shortcode_compare(x["start"], y["start"])
+
+    def get_service(self, filename):
+        for (service, service_map) in self._map.iteritems():
+            for mapping in service_map:
+                if filename == mapping["file"]:
+                    return service
+        raise ValueError("File '%s' not found in mapping table" % filename)
 
 class OutputFile:
 
