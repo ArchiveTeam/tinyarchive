@@ -5,6 +5,9 @@
     "4urlcc": [
         {"file": "4url.cc"}
     ],
+    "arsehat": [
+        {"file": "arseh.at"}
+    ],
     "bitly": [
         {"start": "0", "stop": "____",  "file": "bit.ly/0-____"},
         {"start": "-0000", "stop": "-____", "file": "bit.ly/-0000--____"},
@@ -4198,12 +4201,25 @@
         {"start": "d0000", "stop": "dZZZZ", "file": "ow.ly/a0000-zZZZZ/d0000-dZZZZ"},
         {"start": "e0000", "stop": "eZZZZ", "file": "ow.ly/a0000-zZZZZ/e0000-eZZZZ"},
         {"start": "f0000", "stop": "fZZZZ", "file": "ow.ly/a0000-zZZZZ/f0000-fZZZZ"},
-        {"start": "g0000", "stop": "gZZZZ", "file": "ow.ly/a0000-zZZZZ/g0000-gZZZZ"}
+        {"start": "g0000", "stop": "gZZZZ", "file": "ow.ly/a0000-zZZZZ/g0000-gZZZZ"},
+        {"start": "h0000", "stop": "hZZZZ", "file": "ow.ly/a0000-zZZZZ/h0000-hZZZZ"},
+        {"start": "i0000", "stop": "iZZZZ", "file": "ow.ly/a0000-zZZZZ/i0000-iZZZZ"},
+        {"start": "j0000", "stop": "jZZZZ", "file": "ow.ly/a0000-zZZZZ/j0000-jZZZZ"},
+        {"start": "k0000", "stop": "kZZZZ", "file": "ow.ly/a0000-zZZZZ/k0000-kZZZZ"},
+        {"start": "l0000", "stop": "lZZZZ", "file": "ow.ly/a0000-zZZZZ/l0000-lZZZZ"}
+    ],
+    "postly": [
+        {"file": "post.ly"}
     ],
     "snipurl": [
         {"start": "2000000", "stop": "20~~~~~", "file": "snipurl.com/2000000-20~~~~~"},
         {"start": "2100000", "stop": "21~~~~~", "file": "snipurl.com/2100000-21~~~~~"},
-        {"start": "2200000", "stop": "22~~~~~", "file": "snipurl.com/2200000-22~~~~~"}
+        {"start": "2200000", "stop": "22~~~~~", "file": "snipurl.com/2200000-22~~~~~"},
+        {"start": "2300000", "stop": "23~~~~~", "file": "snipurl.com/2300000-23~~~~~"},
+        {"start": "2400000", "stop": "24~~~~~", "file": "snipurl.com/2400000-24~~~~~"},
+        {"start": "2500000", "stop": "25~~~~~", "file": "snipurl.com/2500000-25~~~~~"},
+        {"start": "2600000", "stop": "26~~~~~", "file": "snipurl.com/2600000-26~~~~~"},
+        {"start": "2700000", "stop": "27~~~~~", "file": "snipurl.com/2700000-27~~~~~"}
     ],
     "surlws": [
         {"file": "surl.ws"}
@@ -4289,8 +4305,14 @@
     "trim": [
         {"file": "tr.im"}
     ],
+    "trimnew": [
+        {"file": "tr.im-relaunched"}
+    ],
     "ur1ca": [
         {"file": "ur1.ca"}
+    ],
+    "vbly": [
+        {"file": "vbly.us"}
     ],
     "xsmd": [
         {"file": "xs.md"}
