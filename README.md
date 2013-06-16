@@ -64,3 +64,6 @@ Takes a JSON file containing task metadata and registers a new task with the
 same parameters at the tracker.
 ### task\_create.py
 File with some helper functions to create new tasks at the tracker.
+### twitter\_spritzer\_import.py
+Untested and unfinished tool to import the unrolled URLS from the Twitter
+spritzer provided by swebb.
