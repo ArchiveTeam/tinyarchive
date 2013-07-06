@@ -125,7 +125,6 @@ class Database:
 
     def next(self):
         if self._cursor == None:
-            print("asd")
             raise StopIteration()
         try:
             result = self._cursor.get(flags=db.DB_NEXT)
