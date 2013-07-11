@@ -125,12 +125,17 @@ class OutputFile:
             os.makedirs(os.path.dirname(self._new_file))
 
         self._fileobj = open(self._new_file + ".txt", "wb")
-        self._hash = hashlib.md5()
+
+        self._hash = None
+        if os.path.isfile(self._old_file + ".txt.xz"):
+            self._hash = hashlib.md5()
+            self._subproc = subprocess.Popen("xzcat '%s.txt.xz' | md5sum" % self._old_file, shell=True, stdout=subprocess.PIPE)
 
     def write(self, code, url):
-        self._hash.update(code + "|")
-        self._hash.update(url)
-        self._hash.update("\n")
+        if self._hash:
+            self._hash.update(code + "|")
+            self._hash.update(url)
+            self._hash.update("\n")
         self._fileobj.write(code + "|")
         self._fileobj.write(url)
         self._fileobj.write("\n")
@@ -139,25 +144,18 @@ class OutputFile:
         self._log.debug("Closing output file")
         self._fileobj.close()
 
-        self._log.debug("Calculating output file hash")
-        new_hash = self._hash.hexdigest()
-        s = subprocess.Popen(["md5sum", self._new_file + ".txt"], stdout=subprocess.PIPE)
-        s.wait()
-        assert s.communicate()[0][:32] == new_hash
+        if self._hash:
+            self._log.debug("Calculating output file hash")
+            new_hash = self._hash.hexdigest()
 
-        if os.path.isfile(self._old_file + ".txt.xz"):
-            s = subprocess.Popen("xzcat '%s.txt.xz' | md5sum" % self._old_file, shell=True, stdout=subprocess.PIPE)
-            s.wait()
-            old_hash = s.communicate()[0][:32]
+            self._subproc.wait()
+            old_hash = self._subproc.communicate()[0][:32]
             self._log.debug("Hash of old previous release file: %s" % old_hash)
-        else:
-            self._log.debug("No previous release file found")
-            old_hash = None
 
-        if old_hash == new_hash:
-            self._log.info("File did not change since last release")
-            os.unlink(self._new_file + ".txt")
-            shutil.copyfile(self._old_file + ".txt.xz", self._new_file + ".txt.xz")
-        else:
-            self._log.info("File changed since last release")
-            subprocess.check_call(["xz", "-9", self._new_file + ".txt"])
+            if old_hash == new_hash:
+                self._log.info("File did not change since last release")
+                os.unlink(self._new_file + ".txt")
+                shutil.copyfile(self._old_file + ".txt.xz", self._new_file + ".txt.xz")
+                return
+
+        subprocess.check_call(["xz", "-9", self._new_file + ".txt"])
