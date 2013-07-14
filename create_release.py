@@ -92,7 +92,7 @@ def main():
         if output:
             output.close()
 
-    print "Remainig files: %s" % repr(list(old_release_files))
+    print "Remaining files: %s" % repr(list(old_release_files))
     db_manager.close()
 
 if __name__ == "__main__":
