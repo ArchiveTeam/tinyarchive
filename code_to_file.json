@@ -4209,7 +4209,18 @@
         {"start": "l0000", "stop": "lZZZZ", "file": "ow.ly/a0000-zZZZZ/l0000-lZZZZ"}
     ],
     "postly": [
-        {"file": "post.ly"}
+        {"start": "0", "stop": "ZZZZ", "file": "post.ly/0-ZZZZ"},
+        {"start": "00000", "stop": "0ZZZZ", "file": "post.ly/00000-9ZZZZ/00000-0ZZZZZ"},
+        {"start": "10000", "stop": "1ZZZZ", "file": "post.ly/00000-9ZZZZ/10000-1ZZZZZ"},
+        {"start": "20000", "stop": "2ZZZZ", "file": "post.ly/00000-9ZZZZ/20000-2ZZZZZ"},
+        {"start": "30000", "stop": "3ZZZZ", "file": "post.ly/00000-9ZZZZ/30000-3ZZZZZ"},
+        {"start": "40000", "stop": "4ZZZZ", "file": "post.ly/00000-9ZZZZ/40000-4ZZZZZ"},
+        {"start": "50000", "stop": "5ZZZZ", "file": "post.ly/00000-9ZZZZ/50000-5ZZZZZ"},
+        {"start": "60000", "stop": "6ZZZZ", "file": "post.ly/00000-9ZZZZ/60000-6ZZZZZ"},
+        {"start": "70000", "stop": "7ZZZZ", "file": "post.ly/00000-9ZZZZ/70000-7ZZZZZ"},
+        {"start": "80000", "stop": "8ZZZZ", "file": "post.ly/00000-9ZZZZ/80000-8ZZZZZ"},
+        {"start": "90000", "stop": "9ZZZZ", "file": "post.ly/00000-9ZZZZ/90000-9ZZZZZ"},
+        {"start": "A0000", "stop": "AZZZZ", "file": "post.ly/A0000-ZZZZZ (uppercase)/A0000-AZZZZ"}
     ],
     "snipurl": [
         {"start": "2000000", "stop": "20~~~~~", "file": "snipurl.com/2000000-20~~~~~"},
