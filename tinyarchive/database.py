@@ -18,6 +18,7 @@ from bsddb3 import db
 import itertools
 import logging
 import os
+import os.path
 import urlparse
 
 import tinyarchive.conflictsolver
@@ -29,6 +30,12 @@ class DBManager:
         self._log = logging.getLogger("tinyarchive.database.DBManager")
         self._log.info("Opening database environment at %s" % database_directory)
         self._database_directory = os.path.abspath(database_directory)
+
+        if not os.path.isdir(os.path.join(self._database_directory, "dbenv")):
+            os.mkdir(os.path.join(self._database_directory, "dbenv"))
+        if not os.path.isdir(os.path.join(self._database_directory, "data")):
+            os.mkdir(os.path.join(self._database_directory, "data"))
+
         self._env = db.DBEnv()
         self._env.set_data_dir(os.path.join(self._database_directory, "data"))
         self._env.open(os.path.join(self._database_directory, "dbenv"), db.DB_INIT_LOCK | db.DB_INIT_LOG | db.DB_INIT_MPOOL | db.DB_CREATE)
