@@ -126,15 +126,8 @@ class Database:
     def next(self):
         if self._cursor == None:
             raise StopIteration()
-        try:
-            result = self._cursor.get(flags=db.DB_NEXT)
-            # According to BerkeleyDB docs, this should throw a DBNotFoundError
-            # when we are at the last entry. Python BSDDB3 4.8.3-3 however does
-            # return None instead, so we just pretend it is throwing that
-            # error.
-            if result == None:
-                raise db.DBNotFoundError
-            return result
-        except db.DBNotFoundError:
-            raise StopIteration()
+        result = self._cursor.get(flags=db.DB_NEXT)
+        if result == None:
             self._cursor = None
+            raise StopIteration()
+        return result
