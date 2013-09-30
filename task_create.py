@@ -54,4 +54,4 @@ def chain_multiple(tracker, service, charset, length, count, number_of_tasks):
         generator_options["seed"] = str(uuid.uuid4())
         print tracker.admin_create(service, "chain", generator_options)
 
-tracker = tinyarchive.tracker.Tracker("http://tracker.tinyarchive.org/v1/")
+tracker = tinyarchive.tracker.Tracker("http://urlteam.terrywri.st/")
